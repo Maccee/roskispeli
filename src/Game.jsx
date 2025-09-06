@@ -3,10 +3,13 @@ import React, { useState } from "react";
 import TrashLottie from "./TrashLottie";
 import GameOverFullscreen from "./GameOverFullscreen";
 
+const MIN_BOXES = 5;
+const MAX_BOXES = 10;
 const DEFAULT_BOXES = 5;
 
 export default function Game() {
   const [maxNumber, setMaxNumber] = useState(20);
+  const [numBoxes, setNumBoxes] = useState(DEFAULT_BOXES);
   const [boxes, setBoxes] = useState(Array(DEFAULT_BOXES).fill(null));
   const [currentNumber, setCurrentNumber] = useState(null);
   const [gameStarted, setGameStarted] = useState(false);
@@ -16,7 +19,7 @@ export default function Game() {
   const allBoxesFilled = boxes.every(b => b !== null);
 
   function startGame() {
-    setBoxes(Array(DEFAULT_BOXES).fill(null));
+    setBoxes(Array(numBoxes).fill(null));
     setUsedNumbers([]);
     setTrash([]);
     setGameStarted(true);
@@ -183,21 +186,61 @@ export default function Game() {
       </div>
       {!gameStarted ? (
         <div>
-          <label style={{ fontSize: 18, color: '#222' }}>
-            Suurin numero:
-            <input
-              type="number"
-              min={DEFAULT_BOXES}
-              max={999}
-              value={maxNumber}
-              onChange={e => setMaxNumber(Math.max(DEFAULT_BOXES, Math.min(999, Number(e.target.value))))}
-              style={{ marginLeft: 8, fontSize: 18, width: 70, borderRadius: 6, border: '1.5px solid #bbb', padding: '2px 6px' }}
-            />
-          </label>
-          <div style={{ fontSize: 14, color: '#666', marginTop: 4 }}>
-            ({DEFAULT_BOXES}-999)
+          <div style={{ marginBottom: 16 }}>
+            <div style={{ fontSize: 18, color: '#222', marginBottom: 8 }}>
+              Laatikoiden määrä:
+            </div>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              gap: 8,
+              marginBottom: 8,
+              flexWrap: 'wrap'
+            }}>
+              {[5, 6, 7, 8, 9, 10].map((num) => (
+                <div
+                  key={num}
+                  onClick={() => setNumBoxes(num)}
+                  style={{
+                    width: 46,
+                    height: 46,
+                    border: '2px solid #333',
+                    borderRadius: 10,
+                    background: numBoxes === num ? '#e3f6e3' : '#f3f3f3',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 24,
+                    fontWeight: 700,
+                    color: numBoxes === num ? '#1a1a1a' : '#666',
+                    cursor: 'pointer',
+                    userSelect: 'none',
+                    transition: 'all 0.2s',
+                    boxShadow: numBoxes === num ? '0 0 6px #bdf' : 'none'
+                  }}
+                >
+                  {num}
+                </div>
+              ))}
+            </div>
           </div>
-          <br />
+          
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ fontSize: 18, color: '#222' }}>
+              Suurin numero:
+              <input
+                type="number"
+                min={numBoxes}
+                max={999}
+                value={maxNumber}
+                onChange={e => setMaxNumber(Math.max(numBoxes, Math.min(999, Number(e.target.value))))}
+                style={{ marginLeft: 8, fontSize: 18, width: 70, borderRadius: 6, border: '1.5px solid #bbb', padding: '2px 6px' }}
+              />
+            </label>
+            <div style={{ fontSize: 14, color: '#666', marginTop: 4 }}>
+              ({numBoxes}-999)
+            </div>
+          </div>
           <button onClick={startGame} style={{ marginTop: 16, fontSize: 18, padding: '8px 28px', borderRadius: 8, background: '#1a73e8', color: '#fff', border: 'none', fontWeight: 600, cursor: 'pointer' }}>
             Aloita peli
           </button>
