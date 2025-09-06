@@ -189,7 +189,9 @@ export default function Game() {
           margin: 0,
         }}
       >
-      <h2 style={{ fontWeight: 700, fontSize: 28, margin: '24px 0 12px 0', color: '#1a1a1a' }}>Roskis</h2>
+      <div style={{ margin: '24px 0 12px 0', display: 'flex', justifyContent: 'center' }}>
+        <img src="/roskispeli.webp" alt="Roskis Peli" style={{ maxWidth: '240px', width: '100%' }} />
+      </div>
       {!gameStarted ? (
         <div>
           <label style={{ fontSize: 18, color: '#222' }}>
