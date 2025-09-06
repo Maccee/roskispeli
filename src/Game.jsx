@@ -81,11 +81,24 @@ export default function Game() {
 
   function trashNumber() {
     if (currentNumber === null) return;
-    setTrash([...trash, currentNumber]);
-    setTrashAnimTrigger(t => !t); // toggle to trigger animation
-    const newUsed = [...usedNumbers, currentNumber];
-    setUsedNumbers(newUsed);
-    nextNumber(newUsed);
+    
+    // Check if the number can be placed in any box
+    let canBePlacedAnywhere = false;
+    for (let i = 0; i < boxes.length; i++) {
+      if (canPlace(currentNumber, i)) {
+        canBePlacedAnywhere = true;
+        break;
+      }
+    }
+    
+    // Only allow trashing if the number cannot be placed anywhere
+    if (!canBePlacedAnywhere) {
+      setTrash([...trash, currentNumber]);
+      setTrashAnimTrigger(t => !t); // toggle to trigger animation
+      const newUsed = [...usedNumbers, currentNumber];
+      setUsedNumbers(newUsed);
+      nextNumber(newUsed);
+    }
   }
   
   function placeNumber(idx) {
@@ -109,7 +122,7 @@ export default function Game() {
       setCurrentNumber(null);
       return;
     }
-    // Check if next number can be placed anywhere, else auto-trash
+    // Generate the next number without auto-trashing
     const available = [];
     for (let i = 1; i <= maxNumber; i++) {
       if (!usedState.includes(i)) available.push(i);
@@ -119,23 +132,7 @@ export default function Game() {
       return;
     }
     const rand = available[Math.floor(Math.random() * available.length)];
-    // Can rand be placed anywhere?
-    let canBePlaced = false;
-    for (let i = 0; i < boxesState.length; i++) {
-      if (canPlaceWithState(rand, i, boxesState)) {
-        canBePlaced = true;
-        break;
-      }
-    }
-    if (canBePlaced) {
-      setCurrentNumber(rand);
-    } else {
-      setTrash(t => [...t, rand]);
-      setTrashAnimTrigger(t => !t); // trigger animation for auto-trashed numbers
-      const newUsed = [...usedState, rand];
-      setUsedNumbers(newUsed);
-      setTimeout(() => autoHandleNext(boxesState, newUsed), 400);
-    }
+    setCurrentNumber(rand);
   }
 
   function canPlaceWithState(num, idx, boxesState) {
@@ -146,6 +143,19 @@ export default function Game() {
       if (boxesState[i] !== null && boxesState[i] <= num) return false;
     }
     return boxesState[idx] === null;
+  }
+  
+  // Function to check if current number can be placed in any box
+  function canTrashCurrentNumber() {
+    if (currentNumber === null) return false;
+    
+    // Check if the number can be placed in any box
+    for (let i = 0; i < boxes.length; i++) {
+      if (canPlace(currentNumber, i)) {
+        return true; // Number can be placed somewhere
+      }
+    }
+    return false; // Number cannot be placed anywhere
   }
 
   return (
@@ -249,7 +259,24 @@ export default function Game() {
                   alignItems: 'center'
                 }}
               >
-                <div style={{ marginBottom: 4 }}>
+                <div 
+                  style={{ 
+                    marginBottom: 4,
+                    cursor: currentNumber !== null && !canTrashCurrentNumber() ? 'pointer' : 'not-allowed',
+                    opacity: currentNumber !== null && !canTrashCurrentNumber() ? 1 : 0.5,
+                    transition: 'all 0.2s ease',
+                    borderRadius: '50%',
+                    boxShadow: currentNumber !== null && !canTrashCurrentNumber() ? '0 0 6px rgba(204,0,0,0.4)' : 'none',
+                  }}
+                  onClick={trashNumber}
+                  title={
+                    currentNumber === null 
+                      ? "No number to trash" 
+                      : canTrashCurrentNumber() 
+                        ? "This number can be placed in a box" 
+                        : "Trash this number"
+                  }
+                >
                   <TrashLottie trigger={trashAnimTrigger} />
                 </div>
                 {trash.length > 0 && (
