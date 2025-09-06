@@ -188,11 +188,15 @@ export default function Game() {
             <input
               type="number"
               min={DEFAULT_BOXES}
+              max={999}
               value={maxNumber}
-              onChange={e => setMaxNumber(Math.max(DEFAULT_BOXES, Number(e.target.value)))}
+              onChange={e => setMaxNumber(Math.max(DEFAULT_BOXES, Math.min(999, Number(e.target.value))))}
               style={{ marginLeft: 8, fontSize: 18, width: 70, borderRadius: 6, border: '1.5px solid #bbb', padding: '2px 6px' }}
             />
           </label>
+          <div style={{ fontSize: 14, color: '#666', marginTop: 4 }}>
+            ({DEFAULT_BOXES}-999)
+          </div>
           <br />
           <button onClick={startGame} style={{ marginTop: 16, fontSize: 18, padding: '8px 28px', borderRadius: 8, background: '#1a73e8', color: '#fff', border: 'none', fontWeight: 600, cursor: 'pointer' }}>
             Aloita peli
