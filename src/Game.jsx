@@ -165,7 +165,6 @@ export default function Game() {
         width: '100vw',
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center',
         background: '#f8fafc',
         overflowX: 'hidden',
       }}

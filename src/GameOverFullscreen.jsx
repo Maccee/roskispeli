@@ -29,7 +29,7 @@ export default function GameOverFullscreen({ onRestart }) {
         alignItems: 'center',
         gap: 2
       }}>
-        <div style={{maxWidth: '90vw', height: '85vh'}}>
+        <div style={{maxWidth: '90vw', height: '80vh'}}>
           <Lottie
             animationData={aniData}
             loop={false}
