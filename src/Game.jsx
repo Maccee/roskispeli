@@ -1,4 +1,6 @@
+
 import React, { useState } from "react";
+import GameOverFullscreen from "./GameOverFullscreen";
 
 const DEFAULT_BOXES = 5;
 
@@ -212,99 +214,99 @@ export default function Game() {
           </button>
         </div>
       ) : (
-        <div style={{ width: '100%' }}>
-          <div style={{ marginBottom: 24 }}>
-            {currentNumber !== null && !allBoxesFilled ? (
-              <span style={{ fontSize: 24, color: '#1a1a1a' }}>
-                Sijoita numero: <b>{currentNumber}</b>
-              </span>
-            ) : (
-              <span style={{ fontSize: 24, color: 'green' }}>Peli ohi!</span>
-            )}
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              gap: 8,
-              marginBottom: 16,
-              flexWrap: 'wrap',
-              maxWidth: 360,
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              width: '100%'
-            }}
-          >
-            {boxes.map((num, idx) => {
-              const canClick = currentNumber !== null && canPlace(currentNumber, idx) && !allBoxesFilled;
-              return (
-                <div
-                  key={idx}
-                  onClick={() => canClick && placeNumber(idx)}
-                  style={{
-                    width: 56,
-                    height: 56,
-                    border: '2px solid #333',
-                    borderRadius: 10,
-                    background: num !== null ? '#fff' : canClick ? '#e3f6e3' : '#f3f3f3',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 28,
-                    fontWeight: 700,
-                    color: num !== null ? '#1a1a1a' : '#888',
-                    cursor: canClick ? 'pointer' : 'not-allowed',
-                    userSelect: 'none',
-                    transition: 'background 0.2s',
-                    boxShadow: canClick ? '0 0 6px #bdf' : undefined
-                  }}
-                >
-                  {num !== null ? num : ''}
-                </div>
-              );
-            })}
-          </div>
-          <div style={{ minHeight: 40, marginBottom: 8 }}>
-            {trash.length > 0 && (
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center'
-                }}
-              >
-                <span
-                  style={{
-                    fontSize: 18,
-                    color: '#c00',
-                    marginBottom: 4
-                  }}
-                >
-                  🗑️ Roskakori
+        <>
+          <div style={{ width: '100%' }}>
+            <div style={{ marginBottom: 24 }}>
+              {currentNumber !== null && !allBoxesFilled ? (
+                <span style={{ fontSize: 24, color: '#1a1a1a' }}>
+                  Sijoita numero: <b>{currentNumber}</b>
                 </span>
+              ) : null}
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                gap: 8,
+                marginBottom: 16,
+                flexWrap: 'wrap',
+                maxWidth: 360,
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                width: '100%'
+              }}
+            >
+              {boxes.map((num, idx) => {
+                const canClick = currentNumber !== null && canPlace(currentNumber, idx) && !allBoxesFilled;
+                return (
+                  <div
+                    key={idx}
+                    onClick={() => canClick && placeNumber(idx)}
+                    style={{
+                      width: 56,
+                      height: 56,
+                      border: '2px solid #333',
+                      borderRadius: 10,
+                      background: num !== null ? '#fff' : canClick ? '#e3f6e3' : '#f3f3f3',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: 28,
+                      fontWeight: 700,
+                      color: num !== null ? '#1a1a1a' : '#888',
+                      cursor: canClick ? 'pointer' : 'not-allowed',
+                      userSelect: 'none',
+                      transition: 'background 0.2s',
+                      boxShadow: canClick ? '0 0 6px #bdf' : undefined
+                    }}
+                  >
+                    {num !== null ? num : ''}
+                  </div>
+                );
+              })}
+            </div>
+            <div style={{ minHeight: 40, marginBottom: 8 }}>
+              {trash.length > 0 && (
                 <div
                   style={{
-                    minHeight: 32,
-                    minWidth: 120,
-                    background: '#ffeaea',
-                    border: '1.5px dashed #c00',
-                    borderRadius: 8,
-                    padding: '4px 8px',
-                    fontSize: 16,
-                    wordBreak: 'break-word',
-                    color: '#c00',
-                    fontWeight: 600
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center'
                   }}
                 >
-                  {trash.join(', ')}
+                  <span
+                    style={{
+                      fontSize: 18,
+                      color: '#c00',
+                      marginBottom: 4
+                    }}
+                  >
+                    🗑️ Roskakori
+                  </span>
+                  <div
+                    style={{
+                      minHeight: 32,
+                      minWidth: 120,
+                      background: '#ffeaea',
+                      border: '1.5px dashed #c00',
+                      borderRadius: 8,
+                      padding: '4px 8px',
+                      fontSize: 16,
+                      wordBreak: 'break-word',
+                      color: '#c00',
+                      fontWeight: 600
+                    }}
+                  >
+                    {trash.join(', ')}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-          <button onClick={() => setGameStarted(false)} style={{ marginTop: 24, fontSize: 18, padding: '8px 28px', borderRadius: 8, background: '#1a73e8', color: '#fff', border: 'none', fontWeight: 600, cursor: 'pointer' }}>
-            Uudestaan
-          </button>
-        </div>
+          {(currentNumber === null || allBoxesFilled) && (
+            <GameOverFullscreen onRestart={() => setGameStarted(false)} />
+          )}
+        </>
       )}
       </div>
     </div>
