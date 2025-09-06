@@ -1,5 +1,6 @@
 
 import React, { useState } from "react";
+import TrashLottie from "./TrashLottie";
 import GameOverFullscreen from "./GameOverFullscreen";
 
 const DEFAULT_BOXES = 5;
@@ -11,6 +12,7 @@ export default function Game() {
   const [gameStarted, setGameStarted] = useState(false);
   const [usedNumbers, setUsedNumbers] = useState([]);
   const [trash, setTrash] = useState([]);
+  const [trashAnimTrigger, setTrashAnimTrigger] = useState(false);
   const allBoxesFilled = boxes.every(b => b !== null);
 
   function startGame() {
@@ -77,24 +79,15 @@ export default function Game() {
     return true;
   }
 
-  function placeNumber(idx) {
-    if (currentNumber === null) return;
-    if (!canPlace(currentNumber, idx)) return;
-    const newBoxes = [...boxes];
-    newBoxes[idx] = currentNumber;
-    const newUsed = [...usedNumbers, currentNumber];
-    setBoxes(newBoxes);
-    setUsedNumbers(newUsed);
-    nextNumber(newUsed);
-  }
-
   function trashNumber() {
     if (currentNumber === null) return;
     setTrash([...trash, currentNumber]);
+    setTrashAnimTrigger(t => !t); // toggle to trigger animation
     const newUsed = [...usedNumbers, currentNumber];
     setUsedNumbers(newUsed);
     nextNumber(newUsed);
   }
+  
   function placeNumber(idx) {
     if (currentNumber === null || allBoxesFilled) return;
     if (!canPlace(currentNumber, idx)) return;
@@ -158,6 +151,7 @@ export default function Game() {
       setCurrentNumber(rand);
     } else {
       setTrash(t => [...t, rand]);
+      setTrashAnimTrigger(t => !t); // trigger animation for auto-trashed numbers
       const newUsed = [...usedState, rand];
       setUsedNumbers(newUsed);
       setTimeout(() => autoHandleNext(boxesState, newUsed), 400);
@@ -266,23 +260,17 @@ export default function Game() {
               })}
             </div>
             <div style={{ minHeight: 40, marginBottom: 8 }}>
-              {trash.length > 0 && (
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center'
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: 18,
-                      color: '#c00',
-                      marginBottom: 4
-                    }}
-                  >
-                    🗑️ Roskakori
-                  </span>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center'
+                }}
+              >
+                <div style={{ marginBottom: 4 }}>
+                  <TrashLottie trigger={trashAnimTrigger} />
+                </div>
+                {trash.length > 0 && (
                   <div
                     style={{
                       minHeight: 32,
@@ -299,8 +287,8 @@ export default function Game() {
                   >
                     {trash.join(', ')}
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
           {(currentNumber === null || allBoxesFilled) && (
