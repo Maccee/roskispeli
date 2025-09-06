@@ -27,6 +27,11 @@ export default function Game() {
   const allBoxesFilled = boxes.every(b => b !== null);
 
   function startGame() {
+    // Ensure maxNumber is at least equal to numBoxes
+    if (maxNumber < numBoxes) {
+      setMaxNumber(numBoxes);
+    }
+    
     setBoxes(Array(numBoxes).fill(null));
     setUsedNumbers([]);
     setTrash([]);
@@ -224,7 +229,12 @@ export default function Game() {
               {[5, 6, 7, 8, 9, 10].map((num) => (
                 <div
                   key={num}
-                  onClick={() => setNumBoxes(num)}
+                  onClick={() => {
+                    setNumBoxes(num);
+                    if (maxNumber < num) {
+                      setMaxNumber(num);
+                    }
+                  }}
                   style={{
                     width: 46,
                     height: 46,
@@ -258,14 +268,44 @@ export default function Game() {
                 max={999}
                 value={maxNumber}
                 onChange={e => setMaxNumber(Math.max(numBoxes, Math.min(999, Number(e.target.value))))}
-                style={{ marginLeft: 8, fontSize: 18, width: 70, borderRadius: 6, border: '1.5px solid #bbb', padding: '2px 6px' }}
+                style={{ 
+                  marginLeft: 8, 
+                  fontSize: 18, 
+                  width: 70, 
+                  borderRadius: 6, 
+                  border: maxNumber < numBoxes ? '1.5px solid #c00' : '1.5px solid #bbb', 
+                  padding: '2px 6px',
+                  background: maxNumber < numBoxes ? '#ffeeee' : 'white'
+                }}
               />
             </label>
-            <div style={{ fontSize: 14, color: '#666', marginTop: 4 }}>
-              ({numBoxes}-999)
+            <div style={{ 
+              fontSize: 14, 
+              color: maxNumber < numBoxes ? '#c00' : '#666', 
+              marginTop: 4,
+              fontWeight: maxNumber < numBoxes ? 'bold' : 'normal' 
+            }}>
+              ({numBoxes}-999) {maxNumber < numBoxes && "- Arvo on liian pieni!"}
             </div>
           </div>
-          <button onClick={startGame} style={{ marginTop: 16, fontSize: 18, padding: '8px 28px', borderRadius: 8, background: '#1a73e8', color: '#fff', border: 'none', fontWeight: 600, cursor: 'pointer' }}>
+          <button 
+            onClick={startGame} 
+            disabled={maxNumber < numBoxes}
+            style={{ 
+              marginTop: 16, 
+              fontSize: 18, 
+              padding: '8px 28px', 
+              borderRadius: 8, 
+              background: maxNumber < numBoxes ? '#cccccc' : '#1a73e8', 
+              color: '#fff', 
+              border: 'none', 
+              fontWeight: 600, 
+              cursor: maxNumber < numBoxes ? 'not-allowed' : 'pointer',
+              opacity: maxNumber < numBoxes ? 0.7 : 1,
+              transition: 'all 0.3s ease'
+            }}
+            title={maxNumber < numBoxes ? "Suurin numero pitää olla vähintään yhtä suuri kuin laatikoiden määrä" : "Aloita peli"}
+          >
             Aloita peli
           </button>
         </div>
