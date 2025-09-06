@@ -101,28 +101,8 @@ export default function Game() {
     }, 200);
   }
 
-  // Auto-place 1 and maxNumber if drawn
-  React.useEffect(() => {
-    if (!gameStarted || currentNumber === null || allBoxesFilled) return;
-    if (currentNumber === 1) {
-      // Place in leftmost available box
-      for (let i = 0; i < boxes.length; i++) {
-        if (canPlace(1, i)) {
-          placeNumber(i);
-          break;
-        }
-      }
-    } else if (currentNumber === maxNumber) {
-      // Place in rightmost available box
-      for (let i = boxes.length - 1; i >= 0; i--) {
-        if (canPlace(maxNumber, i)) {
-          placeNumber(i);
-          break;
-        }
-      }
-    }
-    // eslint-disable-next-line
-  }, [currentNumber, gameStarted, allBoxesFilled]);
+  // Removed auto-placement of min and max numbers
+  // Let users place them manually
 
   function autoHandleNext(boxesState, usedState) {
     if (boxesState.every(b => b !== null)) {

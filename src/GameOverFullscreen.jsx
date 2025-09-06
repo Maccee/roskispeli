@@ -15,13 +15,12 @@ export default function GameOverFullscreen({ onRestart }) {
       top: 0,
       left: 0,
       width: '100vw',
-      height: '100vh',
+      height: '70vh',
       background: 'transparent',
       zIndex: 9999,
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      justifyContent: 'center',
       pointerEvents: 'all'
     }}>
       <div style={{ 
@@ -30,16 +29,13 @@ export default function GameOverFullscreen({ onRestart }) {
         alignItems: 'center',
         gap: 2
       }}>
-        <span style={{ fontSize: 32, color: 'green', fontWeight: 700, textShadow: '0 2px 4px rgba(255,255,255,0.8)' }}>Peli ohi!</span>
-        <div style={{maxWidth: '90vw', height: '70vh'}}>
+        <div style={{maxWidth: '90vw', height: '85vh'}}>
           <Lottie
             animationData={aniData}
             loop={false}
             autoplay
             style={{ width: '100%', height: '100%' }}
           />
-        </div>
-        
         <button
           onClick={onRestart}
           style={{ 
@@ -56,6 +52,7 @@ export default function GameOverFullscreen({ onRestart }) {
         >
           Uudestaan
         </button>
+        </div>
       </div>
     </div>
   );
