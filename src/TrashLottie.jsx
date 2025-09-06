@@ -21,7 +21,7 @@ export default function TrashLottie({ trigger }) {
   if (!aniData) return <div style={{ width: 48, height: 48 }} />;
   
   return (
-    <div style={{ width: 48, height: 48 }}>
+    <div style={{ width: 68, height: 68 }}>
       <Lottie
         key={playKey}
         animationData={aniData}
