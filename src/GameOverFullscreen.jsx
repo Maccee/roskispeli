@@ -28,10 +28,10 @@ export default function GameOverFullscreen({ onRestart }) {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        gap: 200
+        gap: 2
       }}>
         <span style={{ fontSize: 32, color: 'green', fontWeight: 700, textShadow: '0 2px 4px rgba(255,255,255,0.8)' }}>Peli ohi!</span>
-        <div style={{ width: 260, maxWidth: '90vw' }}>
+        <div style={{maxWidth: '90vw', height: '70vh'}}>
           <Lottie
             animationData={aniData}
             loop={false}
