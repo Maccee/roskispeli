@@ -41,7 +41,38 @@ export default function Game() {
     for (let i = idx + 1; i < boxes.length; i++) {
       if (boxes[i] !== null && boxes[i] <= num) return false;
     }
-    return boxes[idx] === null;
+    if (boxes[idx] !== null) return false;
+
+    // New logic: ensure enough available numbers to fill all empty boxes in strictly increasing order
+    // Gather all placed numbers and the candidate
+    const filled = boxes.map((v, i) => (i === idx ? num : v)).map(v => v === null ? null : v);
+    // Find all empty indices
+    const emptyIndices = [];
+    for (let i = 0; i < filled.length; i++) {
+      if (filled[i] === null) emptyIndices.push(i);
+    }
+    // Get all available numbers
+    const used = [...usedNumbers, num];
+    const available = [];
+    for (let i = 1; i <= maxNumber; i++) {
+      if (!used.includes(i)) available.push(i);
+    }
+    // Try to greedily assign available numbers to empty slots so that the whole array is strictly increasing
+    let prev = -Infinity;
+    let availIdx = 0;
+    for (let i = 0; i < filled.length; i++) {
+      if (filled[i] !== null) {
+        if (filled[i] <= prev) return false;
+        prev = filled[i];
+      } else {
+        // Find the smallest available number greater than prev
+        while (availIdx < available.length && available[availIdx] <= prev) availIdx++;
+        if (availIdx >= available.length) return false;
+        prev = available[availIdx];
+        availIdx++;
+      }
+    }
+    return true;
   }
 
   function placeNumber(idx) {
@@ -145,17 +176,23 @@ export default function Game() {
     <div
       style={{
         minHeight: '100vh',
-        maxWidth: 500,
-        margin: '0 auto',
-        textAlign: 'center',
-        padding: '0 8px',
+        width: '100vw',
         display: 'flex',
-        flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        background: '#f8fafc'
+        background: '#f8fafc',
+        overflowX: 'hidden',
       }}
     >
+      <div
+        style={{
+          maxWidth: 500,
+          width: '100%',
+          textAlign: 'center',
+          padding: '0 8px',
+          margin: 0,
+        }}
+      >
       <h2 style={{ fontWeight: 700, fontSize: 28, margin: '24px 0 12px 0', color: '#1a1a1a' }}>Roskis</h2>
       {!gameStarted ? (
         <div>
@@ -269,6 +306,7 @@ export default function Game() {
           </button>
         </div>
       )}
+      </div>
     </div>
   );
 }
