@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TrashLottie from "./TrashLottie";
 import GameOverFullscreen from "./GameOverFullscreen";
 
@@ -16,6 +16,14 @@ export default function Game() {
   const [usedNumbers, setUsedNumbers] = useState([]);
   const [trash, setTrash] = useState([]);
   const [trashAnimTrigger, setTrashAnimTrigger] = useState(false);
+  // Using a ref for the audio element to avoid re-creation on render
+  const [gameOverSound, setGameOverSound] = useState(null);
+  
+  // Initialize audio element once when component mounts
+  useEffect(() => {
+    const audio = new Audio("/gameover.mp3");
+    setGameOverSound(audio);
+  }, []);
   const allBoxesFilled = boxes.every(b => b !== null);
 
   function startGame() {
@@ -123,6 +131,8 @@ export default function Game() {
   function autoHandleNext(boxesState, usedState) {
     if (boxesState.every(b => b !== null)) {
       setCurrentNumber(null);
+      // Play game over sound when all boxes are filled
+      playGameOverSound();
       return;
     }
     // Generate the next number without auto-trashing
@@ -132,10 +142,24 @@ export default function Game() {
     }
     if (available.length === 0) {
       setCurrentNumber(null);
+      // Play game over sound when no more numbers are available
+      playGameOverSound();
       return;
     }
     const rand = available[Math.floor(Math.random() * available.length)];
     setCurrentNumber(rand);
+  }
+  
+  // Function to play the game over sound
+  function playGameOverSound() {
+    if (!gameOverSound) return;
+    
+    try {
+      gameOverSound.currentTime = 0; // Reset the audio to the start
+      gameOverSound.play().catch(e => console.log("Audio play failed:", e));
+    } catch (error) {
+      console.log("Error playing sound:", error);
+    }
   }
 
   function canPlaceWithState(num, idx, boxesState) {
