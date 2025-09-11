@@ -16,13 +16,16 @@ export default function Game() {
   const [usedNumbers, setUsedNumbers] = useState([]);
   const [trash, setTrash] = useState([]);
   const [trashAnimTrigger, setTrashAnimTrigger] = useState(false);
-  // Using a ref for the audio element to avoid re-creation on render
+  // Audio elements for different game outcomes
   const [gameOverSound, setGameOverSound] = useState(null);
+  const [clapSound, setClapSound] = useState(null);
   
-  // Initialize audio element once when component mounts
+  // Initialize audio elements once when component mounts
   useEffect(() => {
-    const audio = new Audio("/gameover.mp3");
-    setGameOverSound(audio);
+    const gameOverAudio = new Audio("/gameover.mp3");
+    const clapAudio = new Audio("/clap.mp3");
+    setGameOverSound(gameOverAudio);
+    setClapSound(clapAudio);
   }, []);
   const allBoxesFilled = boxes.every(b => b !== null);
 
@@ -138,15 +141,32 @@ export default function Game() {
     setCurrentNumber(rand);
   }
   
-  // Function to play the game over sound
+  // Function to play the appropriate end game sound
   function playGameOverSound() {
-    if (!gameOverSound) return;
+    console.log("Game over function called. Trash length:", trash.length);
     
-    try {
-      gameOverSound.currentTime = 0; // Reset the audio to the start
-      gameOverSound.play().catch(e => console.log("Audio play failed:", e));
-    } catch (error) {
-      console.log("Error playing sound:", error);
+    if (trash.length === 0) {
+      // Play gameover sound when trash is empty (perfect game)
+      if (gameOverSound) {
+        console.log("Playing gameover sound - perfect game!");
+        try {
+          gameOverSound.currentTime = 0;
+          gameOverSound.play().catch(e => console.log("Game over sound play failed:", e));
+        } catch (error) {
+          console.log("Error playing game over sound:", error);
+        }
+      }
+    } else {
+      // Play clap sound when there are items in trash
+      if (clapSound) {
+        console.log("Playing clap sound - trash has", trash.length, "items");
+        try {
+          clapSound.currentTime = 0;
+          clapSound.play().catch(e => console.log("Clap sound play failed:", e));
+        } catch (error) {
+          console.log("Error playing clap sound:", error);
+        }
+      }
     }
   }
 
