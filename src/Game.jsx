@@ -393,7 +393,10 @@ export default function Game() {
             </div>
           </div>
           {(currentNumber === null || allBoxesFilled) && (
-            <GameOverFullscreen onRestart={() => setGameStarted(false)} />
+            <GameOverFullscreen 
+              onRestart={() => setGameStarted(false)} 
+              isPerfectGame={trash.length === 0}
+            />
           )}
         </>
       )}
