@@ -5,7 +5,7 @@ import GameOverFullscreen from "./GameOverFullscreen";
 
 const MIN_BOXES = 5;
 const MAX_BOXES = 10;
-const DEFAULT_BOXES = 5;
+const DEFAULT_BOXES = MIN_BOXES;
 
 export default function Game() {
   const [maxNumber, setMaxNumber] = useState(20);
@@ -66,11 +66,6 @@ export default function Game() {
     // New logic: ensure enough available numbers to fill all empty boxes in strictly increasing order
     // Gather all placed numbers and the candidate
     const filled = boxes.map((v, i) => (i === idx ? num : v)).map(v => v === null ? null : v);
-    // Find all empty indices
-    const emptyIndices = [];
-    for (let i = 0; i < filled.length; i++) {
-      if (filled[i] === null) emptyIndices.push(i);
-    }
     // Get all available numbers
     const used = [...usedNumbers, num];
     const available = [];
@@ -98,17 +93,8 @@ export default function Game() {
   function trashNumber() {
     if (currentNumber === null) return;
     
-    // Check if the number can be placed in any box
-    let canBePlacedAnywhere = false;
-    for (let i = 0; i < boxes.length; i++) {
-      if (canPlace(currentNumber, i)) {
-        canBePlacedAnywhere = true;
-        break;
-      }
-    }
-    
     // Only allow trashing if the number cannot be placed anywhere
-    if (!canBePlacedAnywhere) {
+    if (!canNumberBePlaced()) {
       setTrash([...trash, currentNumber]);
       setTrashAnimTrigger(t => !t); // toggle to trigger animation
       const newUsed = [...usedNumbers, currentNumber];
@@ -129,9 +115,6 @@ export default function Game() {
       autoHandleNext(newBoxes, newUsed);
     }, 200);
   }
-
-  // Removed auto-placement of min and max numbers
-  // Let users place them manually
 
   function autoHandleNext(boxesState, usedState) {
     if (boxesState.every(b => b !== null)) {
@@ -167,18 +150,8 @@ export default function Game() {
     }
   }
 
-  function canPlaceWithState(num, idx, boxesState) {
-    for (let i = 0; i < idx; i++) {
-      if (boxesState[i] !== null && boxesState[i] >= num) return false;
-    }
-    for (let i = idx + 1; i < boxesState.length; i++) {
-      if (boxesState[i] !== null && boxesState[i] <= num) return false;
-    }
-    return boxesState[idx] === null;
-  }
-  
   // Function to check if current number can be placed in any box
-  function canTrashCurrentNumber() {
+  function canNumberBePlaced() {
     if (currentNumber === null) return false;
     
     // Check if the number can be placed in any box
@@ -226,7 +199,7 @@ export default function Game() {
               marginBottom: 8,
               flexWrap: 'wrap'
             }}>
-              {[5, 6, 7, 8, 9, 10].map((num) => (
+              {Array.from({ length: MAX_BOXES - MIN_BOXES + 1 }, (_, i) => i + MIN_BOXES).map((num) => (
                 <div
                   key={num}
                   onClick={() => {
@@ -372,17 +345,17 @@ export default function Game() {
                 <div 
                   style={{ 
                     marginBottom: 4,
-                    cursor: currentNumber !== null && !canTrashCurrentNumber() ? 'pointer' : 'not-allowed',
-                    opacity: currentNumber !== null && !canTrashCurrentNumber() ? 1 : 0.5,
+                    cursor: currentNumber !== null && !canNumberBePlaced() ? 'pointer' : 'not-allowed',
+                    opacity: currentNumber !== null && !canNumberBePlaced() ? 1 : 0.5,
                     transition: 'all 0.2s ease',
                     borderRadius: '50%',
-                    boxShadow: currentNumber !== null && !canTrashCurrentNumber() ? '0 0 6px rgba(204,0,0,0.4)' : 'none',
+                    boxShadow: currentNumber !== null && !canNumberBePlaced() ? '0 0 6px rgba(204,0,0,0.4)' : 'none',
                   }}
                   onClick={trashNumber}
                   title={
                     currentNumber === null 
                       ? "No number to trash" 
-                      : canTrashCurrentNumber() 
+                      : canNumberBePlaced() 
                         ? "This number can be placed in a box" 
                         : "Trash this number"
                   }
