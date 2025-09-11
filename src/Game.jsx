@@ -203,7 +203,7 @@ export default function Game() {
     >
       <div
         style={{
-          maxWidth: 500,
+          maxWidth: 1000,
           width: "100%",
           textAlign: "center",
         }}
@@ -219,11 +219,10 @@ export default function Game() {
               style={{
                 margin: "0 0 1rem 0",
                 padding: "1rem",
-                border: "2px solid #3a86ff",
                 borderRadius: "1rem",
                 backgroundColor: "#f0f7ff",
-                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-                textAlign: "left",
+                boxShadow: "0 8px 10px rgba(0, 0, 0, 0.1)",
+                textAlign: "center"
               }}
             >
               <div
@@ -332,16 +331,15 @@ export default function Game() {
             <button
               onClick={startGame}
               style={{
-                marginTop: 16,
-                fontSize: 18,
-                padding: "8px 28px",
-                borderRadius: 8,
+                fontSize: 22,
+                padding: "14px 44px",
+                borderRadius: 10,
                 background: "#1a73e8",
                 color: "#fff",
                 border: "none",
-                fontWeight: 600,
+                fontWeight: 700,
                 cursor: "pointer",
-                transition: "all 0.3s ease",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
               }}
               title="Aloita peli"
             >
