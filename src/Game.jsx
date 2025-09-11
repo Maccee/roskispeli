@@ -30,21 +30,34 @@ export default function Game() {
   const allBoxesFilled = boxes.every(b => b !== null);
 
   function startGame() {
-    // Ensure maxNumber is at least equal to numBoxes
-    if (maxNumber < numBoxes) {
-      setMaxNumber(numBoxes);
+    // Validate the maxNumber input
+    let validMaxNumber = Number(maxNumber);
+    
+    // Ensure it's a valid number
+    if (isNaN(validMaxNumber) || validMaxNumber === 0) {
+      validMaxNumber = 20; // Default to 20 if invalid
     }
+    
+    // Ensure it's at least numBoxes and at most 999
+    validMaxNumber = Math.max(numBoxes, Math.min(999, validMaxNumber));
+    
+    // Update the state with validated number
+    setMaxNumber(validMaxNumber);
     
     setBoxes(Array(numBoxes).fill(null));
     setUsedNumbers([]);
     setTrash([]);
     setGameStarted(true);
-    nextNumber([]);
+    // Pass the validated number directly to nextNumber
+    nextNumber([], validMaxNumber);
   }
 
-  function nextNumber(used) {
+  function nextNumber(used, validMaxNum = null) {
+    // Use the provided validMaxNum if available, otherwise use state
+    const maxValue = validMaxNum !== null ? validMaxNum : maxNumber;
+    
     const available = [];
-    for (let i = 1; i <= maxNumber; i++) {
+    for (let i = 1; i <= maxValue; i++) {
       if (!used.includes(i)) available.push(i);
     }
     if (available.length === 0) {
@@ -102,6 +115,7 @@ export default function Game() {
       setTrashAnimTrigger(t => !t); // toggle to trigger animation
       const newUsed = [...usedNumbers, currentNumber];
       setUsedNumbers(newUsed);
+      // Use the current state value of maxNumber which is already validated
       nextNumber(newUsed);
     }
   }
@@ -126,6 +140,8 @@ export default function Game() {
       playGameOverSound();
       return;
     }
+    
+    // Use the validated maxNumber (which is already constrained to 999 max)
     // Generate the next number without auto-trashing
     const available = [];
     for (let i = 1; i <= maxNumber; i++) {
@@ -242,51 +258,60 @@ export default function Game() {
           </div>
           
           <div style={{ marginBottom: 16 }}>
-            <label style={{ fontSize: 18, color: '#222' }}>
+            <label style={{ fontSize: 18, color: '#222'}}>
               Suurin numero:
               <input
-                type="number"
-                min={numBoxes}
-                max={999}
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 value={maxNumber}
-                onChange={e => setMaxNumber(Math.max(numBoxes, Math.min(999, Number(e.target.value))))}
+                onChange={e => {
+                  // Allow only numeric input
+                  const value = e.target.value.replace(/[^0-9]/g, '');
+                  // Update state with the raw value (validation will happen on game start)
+                  setMaxNumber(value === '' ? '' : Number(value));
+                }}
                 style={{ 
                   marginLeft: 8, 
                   fontSize: 18, 
                   width: 70, 
                   borderRadius: 6, 
-                  border: maxNumber < numBoxes ? '1.5px solid #c00' : '1.5px solid #bbb', 
+                  border: '1.5px solid #555', 
                   padding: '2px 6px',
-                  background: maxNumber < numBoxes ? '#ffeeee' : 'white'
+                  background: '#f0f0f0',
+                  color: '#000',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                  fontWeight: 600,
+                  outline: 'none'
                 }}
               />
             </label>
             <div style={{ 
               fontSize: 14, 
-              color: maxNumber < numBoxes ? '#c00' : '#666', 
+              color: '#444', 
               marginTop: 4,
-              fontWeight: maxNumber < numBoxes ? 'bold' : 'normal' 
+              padding: '2px 4px',
+              borderRadius: 4,
+              display: 'inline-block'
             }}>
-              ({numBoxes}-999) {maxNumber < numBoxes && "- Arvo on liian pieni!"}
+              ({numBoxes}-999)
             </div>
           </div>
           <button 
-            onClick={startGame} 
-            disabled={maxNumber < numBoxes}
+            onClick={startGame}
             style={{ 
               marginTop: 16, 
               fontSize: 18, 
               padding: '8px 28px', 
               borderRadius: 8, 
-              background: maxNumber < numBoxes ? '#cccccc' : '#1a73e8', 
+              background: '#1a73e8', 
               color: '#fff', 
               border: 'none', 
               fontWeight: 600, 
-              cursor: maxNumber < numBoxes ? 'not-allowed' : 'pointer',
-              opacity: maxNumber < numBoxes ? 0.7 : 1,
+              cursor: 'pointer',
               transition: 'all 0.3s ease'
             }}
-            title={maxNumber < numBoxes ? "Suurin numero pitää olla vähintään yhtä suuri kuin laatikoiden määrä" : "Aloita peli"}
+            title="Aloita peli"
           >
             Aloita peli
           </button>
